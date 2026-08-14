@@ -1,0 +1,18 @@
+[project]
+name = "reweave-engine"
+version = "0.0.0"
+description = "Reweave analysis engine — parsing, fingerprinting, detection. No Django imports."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "reweave-shared",
+]
+
+[project.scripts]
+reweave-audit = "reweave_engine.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/reweave_engine"]

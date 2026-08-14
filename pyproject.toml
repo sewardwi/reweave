@@ -1,0 +1,93 @@
+[project]
+name = "reweave-workspace"
+version = "0.0.0"
+description = "Reweave monorepo root (virtual workspace — not a distributable package)"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[dependency-groups]
+# Justification per dependency, per CLAUDE.md's dependency rule.
+dev = [
+  "pytest>=8.3",           # test runner
+  "pytest-cov>=5.0",       # coverage reporting for the touched-span rule (D8)
+  "ruff>=0.8",             # lint + format, one tool
+  "pyright>=1.1.390",      # strict type checking
+  "pre-commit>=4.0",       # hook runner
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/*", "apps/api", "workers"]
+
+[tool.uv.sources]
+reweave-engine = { workspace = true }
+reweave-remediation = { workspace = true }
+reweave-shared = { workspace = true }
+
+# ── Lint / format ────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["benchmarks/.cache"]
+
+[tool.ruff.lint]
+select = [
+  "E", "F", "W",   # pycodestyle, pyflakes
+  "I",             # import sorting
+  "UP",            # pyupgrade
+  "B",             # bugbear
+  "SIM",           # simplify
+  "RUF",           # ruff-specific
+  "S",             # bandit — security lint matters here, we execute untrusted code
+  "T20",           # no stray print() — code content must never reach logs (D10)
+  "ANN",           # require annotations; pyright strict depends on them
+]
+ignore = [
+  "ANN401",  # allow Any in narrow, documented spots
+  "S101",    # assert is fine in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S", "ANN"]
+"benchmarks/*.py" = ["T20"]  # bench scripts are CLIs; printing is their output
+"ops/*.py" = ["T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["reweave_engine", "reweave_remediation", "reweave_shared"]
+
+# ── Types ────────────────────────────────────────────────────────────────────
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+include = ["packages", "apps/api", "workers", "benchmarks", "ops"]
+exclude = ["**/node_modules", "**/__pycache__", "benchmarks/.cache", "**/migrations"]
+reportMissingTypeStubs = false
+
+# Django's management entry point and Celery's decorators are untyped at the source. Relaxing
+# these two rules only where those frameworks are touched is cheaper and more honest than
+# scattering `# type: ignore` through otherwise-strict files. Everything that carries our actual
+# analysis logic — packages/, benchmarks/ — stays fully strict.
+[[tool.pyright.executionEnvironments]]
+root = "apps/api"
+reportUnknownMemberType = false
+reportUntypedFunctionDecorator = false
+
+[[tool.pyright.executionEnvironments]]
+root = "workers"
+reportUnknownMemberType = false
+reportUntypedFunctionDecorator = false
+
+[[tool.pyright.executionEnvironments]]
+root = "."
+
+# ── Tests ────────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["packages", "apps/api", "workers", "benchmarks", "tests"]
+python_files = ["test_*.py"]
+addopts = "-q --strict-markers --strict-config"
+markers = [
+  "slow: excluded from the default CI gate",
+  "network: requires network access (corpus fetch, GitHub API)",
+]

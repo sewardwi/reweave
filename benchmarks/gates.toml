@@ -1,0 +1,16 @@
+# Benchmark gates enforced by CI on the TRAIN split (see run_bench.py for split discipline).
+#
+# These are a ratchet: they may go up, never down. Lowering a gate to make a red build green is
+# the one move that quietly ends the eval discipline, so it requires an ADR explaining why the
+# gate was wrong in the first place.
+#
+# Set at the Phase 0 baseline's measured performance (token_overlap_v1, corpus v0, train split:
+# precision 0.667, recall 0.571), with a small margin so that unrelated corpus growth doesn't
+# produce spurious failures. These are a regression alarm, not a quality bar.
+#
+# The quality bar is Phase 1's exit criteria: precision >= 0.90 at recall >= 0.50 on the holdout.
+# Raise these gates as the engine improves.
+
+[gate]
+min_precision = 0.65
+min_recall = 0.55

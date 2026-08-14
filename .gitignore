@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Env & secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local state
+.DS_Store
+.cache/
+benchmarks/.cache/          # fetched corpus sources; regenerable, never vendored
+reports/
+coverage/
+.coverage
+htmlcov/
