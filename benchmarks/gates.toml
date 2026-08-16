@@ -2,15 +2,21 @@
 #
 # These are a ratchet: they may go up, never down. Lowering a gate to make a red build green is
 # the one move that quietly ends the eval discipline, so it requires an ADR explaining why the
-# gate was wrong in the first place.
+# gate was wrong in the first place. See docs/adr/ADR-0018 for the first (and so far only) time
+# that rule bound.
 #
-# Set at the Phase 0 baseline's measured performance (token_overlap_v1, corpus v0, train split:
-# precision 0.667, recall 0.571), with a small margin so that unrelated corpus growth doesn't
-# produce spurious failures. These are a regression alarm, not a quality bar.
+# A gate value is meaningless without a corpus version. These are a regression ratchet on a FIXED
+# corpus: when the corpus changes, re-measure the unchanged detector, recalibrate in the same
+# commit, and write down why. Numbers from a different corpus_version are not comparable.
+#
+# Calibrated against the Phase 0 baseline (token_overlap_v1) on corpus v1, train split:
+# precision 0.585, recall 0.414. Set just below, so unrelated corpus growth does not produce
+# spurious failures. These are a regression alarm, not a quality bar.
 #
 # The quality bar is Phase 1's exit criteria: precision >= 0.90 at recall >= 0.50 on the holdout.
-# Raise these gates as the engine improves.
+
+corpus_version = "v1"
 
 [gate]
-min_precision = 0.65
-min_recall = 0.55
+min_precision = 0.55
+min_recall = 0.38

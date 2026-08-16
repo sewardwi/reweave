@@ -22,8 +22,21 @@ Notable changes, newest first. Updated in the same PR as the change it describes
 - Docker Compose dev stack: Postgres/pgvector, Redis, Django API, Celery worker.
 - `CLAUDE.md`, `SECURITY.md`, and ADR-0001..0017 seeding decisions D1–D17.
 
+### Changed
+- Corpus grown to v1: **151 pairs** (110 train / 41 holdout), of which 41 are mined from
+  date-fns, axios, httpx, and click and stored as pointers. All six D16 exclusion rules are now
+  exercised; labels split 81 duplicate / 70 not-duplicate across Python, TypeScript, and JavaScript.
+- `mine_candidates.py` gained diversity caps and test-file exclusion. The first run returned 23 of
+  60 candidates from a single date-fns locale file and 26 of 60 from one httpx module; axios and
+  click candidates were almost entirely test files. Candidates are now capped per chunk, per file,
+  and per file-pair, and drawn round-robin from similarity bands.
+- Benchmark gates recalibrated to 0.55 / 0.38 against corpus v1, with `corpus_version` recorded in
+  `gates.toml`. See ADR-0018 — the detector did not change, the measuring instrument did.
+
 ### Measured
-- Baseline `token_overlap_v1` on corpus v0 train split: **precision 0.667, recall 0.571**.
-  All 5 false negatives were semantic reimplementations (20–38% structural similarity); all 4
-  false positives were near-identical code with divergent behavior (85–100%). Gates set at
-  0.65 / 0.55 as a regression ratchet.
+- Baseline `token_overlap_v1`, corpus v0 train split (23 pairs): precision 0.667, recall 0.571.
+- Baseline `token_overlap_v1`, **corpus v1 train split (110 pairs): precision 0.585, recall
+  0.414**, same detector, unchanged. The larger corpus with real mined code is the more truthful
+  measurement; the drop is concentrated in recall, on semantic reimplementations sitting at
+  28–47% structural similarity that no lexical method can reach.
+- Holdout deliberately not scored. It stays sealed until the Phase 1 gate.

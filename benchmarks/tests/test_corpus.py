@@ -10,7 +10,6 @@ from __future__ import annotations
 import hashlib
 from collections import Counter
 
-import pytest
 from corpus_schema import (
     Advisability,
     InlineSource,
@@ -23,8 +22,8 @@ from corpus_schema import (
 
 CORPUS = load_corpus()
 
-#: Phase 0 ships a seed corpus. The plan's floor is 150 pairs; growing to it is a Phase 0/1
-#: action item, and this test is the reminder that will not let it be forgotten.
+#: The plan's floor (PLAN.md Phase 0). Reached in corpus v1; this is now a regression guard
+#: rather than a to-do, and it may only ever be raised.
 PLANNED_MINIMUM = 150
 
 
@@ -97,9 +96,21 @@ class TestSources:
                     assert side.end_line >= side.start_line
 
 
-@pytest.mark.xfail(
-    reason=f"corpus v0 is a seed; the plan's floor is {PLANNED_MINIMUM} pairs (Phase 0 action)",
-    strict=True,
-)
 def test_corpus_reaches_the_planned_minimum() -> None:
     assert len(CORPUS) >= PLANNED_MINIMUM
+
+
+class TestProvenance:
+    def test_includes_real_mined_code(self) -> None:
+        """Authored pairs are cleaner than reality and will flatter any detector.
+
+        A corpus made only of code we wrote ourselves measures how well the engine handles our
+        imagination. Mined pairs from real repositories are the corrective, so the corpus must
+        keep a meaningful share of them.
+        """
+        mined = sum(1 for p in CORPUS if not isinstance(p.left, InlineSource))
+        assert mined / len(CORPUS) >= 0.20
+
+    def test_mined_pairs_span_multiple_repositories(self) -> None:
+        repos = {p.left.repo for p in CORPUS if not isinstance(p.left, InlineSource)}
+        assert len(repos) >= 3

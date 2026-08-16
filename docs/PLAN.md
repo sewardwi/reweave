@@ -218,12 +218,12 @@ Each phase has **action points**, **exit criteria** (gates — do not proceed un
 
 ### Phase 0 — Foundations (days 1–4)
 **Actions:**
-- [ ] Scaffold the monorepo exactly as §5; Python 3.12 + `uv`, Node 20 + `pnpm`.
-- [ ] Tooling: ruff + pyright (strict), pytest; eslint + prettier + `tsc --strict`; pre-commit hooks; conventional commits.
-- [ ] CI: lint → typecheck → tests → benchmark gate (dummy detector initially), on every PR.
-- [ ] Write `CLAUDE.md` (see §8) and seed `docs/adr/` with D1–D17.
-- [ ] Build the benchmark harness + corpus v0 (≥150 labeled pairs, **stored as pointers** per D12): mine real intra-repo clones from permissively-licensed OSS as candidates, hand-label; synthesize AI-style duplicates (prompt a model to re-implement existing functions); include **hard negatives** (similar-looking, semantically different). Create the holdout split now and never touch it for tuning.
-- [ ] Label a D16 dimension on every corpus pair while you're already reading it: *should* these be consolidated? It costs almost nothing now and is the only way to measure the desirability rubric later.
+- [x] Scaffold the monorepo exactly as §5; Python 3.12 + `uv`, Node 24 LTS + `pnpm` (Node 20 reached EOL April 2026 — ADR-0003).
+- [x] Tooling: ruff + pyright (strict), pytest; eslint + prettier + `tsc --strict`; pre-commit hooks; conventional commits.
+- [x] CI: lint → typecheck → tests → benchmark gate (dummy detector initially), on every PR.
+- [x] Write `CLAUDE.md` (see §8) and seed `docs/adr/` with D1–D17.
+- [x] Build the benchmark harness + corpus v0 (≥150 labeled pairs, **stored as pointers** per D12): mine real intra-repo clones from permissively-licensed OSS as candidates, hand-label; synthesize AI-style duplicates (prompt a model to re-implement existing functions); include **hard negatives** (similar-looking, semantically different). Create the holdout split now and never touch it for tuning.
+- [x] Label a D16 dimension on every corpus pair while you're already reading it: *should* these be consolidated? It costs almost nothing now and is the only way to measure the desirability rubric later.
 - [ ] **Start design-partner recruitment now** (owner task, runs in the background for weeks). Target 5 teams of 5–100 devs using AI tooling heavily. The ask at this stage is small and honest: "can I run an early detector over your repo and walk you through what it found?" Their reaction to raw Phase 1 output is the cheapest product feedback we will ever get.
 
 **Exit criteria:** CI green end-to-end; `make bench` emits a precision/recall report; docker-compose brings up api+db+redis+worker locally in one command; ≥ 2 design-partner conversations booked.
