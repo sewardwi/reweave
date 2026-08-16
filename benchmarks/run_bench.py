@@ -20,6 +20,7 @@ import hashlib
 import json
 import sys
 import tomllib
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import cast
@@ -36,9 +37,19 @@ from corpus_schema import (
 
 from reweave_engine import LoadedUnit, TokenOverlapDetector
 from reweave_engine.detector import PairDetector
+from reweave_engine.structural import AstStructuralDetector
 from reweave_shared import CodeUnit, Span, Verdict
 
 GATES_PATH = Path(__file__).parent / "gates.toml"
+
+#: Every detector the benchmark knows how to score. The default is what CI gates on; the others
+#: exist so that "did that change help?" is answered by a number rather than by an argument.
+DETECTORS: dict[str, Callable[[], PairDetector]] = {
+    "ast": AstStructuralDetector,
+    "ast_flat": lambda: AstStructuralDetector(indexed_identifiers=False),
+    "baseline": TokenOverlapDetector,
+}
+DEFAULT_DETECTOR = "ast"
 
 
 @dataclass(frozen=True)
@@ -194,6 +205,12 @@ def main(argv: list[str] | None = None) -> int:
         default=Split.TRAIN.value,
         help="which split to score (default: train; holdout is for phase gates only)",
     )
+    parser.add_argument(
+        "--detector",
+        choices=sorted(DETECTORS),
+        default=DEFAULT_DETECTOR,
+        help=f"which detector to score (default: {DEFAULT_DETECTOR})",
+    )
     parser.add_argument("--json", dest="json_out", help="also write the report here")
     parser.add_argument(
         "--show-errors",
@@ -218,7 +235,7 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    detector = TokenOverlapDetector()
+    detector = DETECTORS[args.detector]()
     errors: list[str] = []
     scores = score(detector, pairs, split, errors=errors)
     gates = load_gates()

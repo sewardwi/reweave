@@ -9,14 +9,22 @@
 # corpus: when the corpus changes, re-measure the unchanged detector, recalibrate in the same
 # commit, and write down why. Numbers from a different corpus_version are not comparable.
 #
-# Calibrated against the Phase 0 baseline (token_overlap_v1) on corpus v1, train split:
-# precision 0.585, recall 0.414. Set just below, so unrelated corpus growth does not produce
-# spurious failures. These are a regression alarm, not a quality bar.
+# Ratcheted up in Phase 1 when ast_structural_v1 replaced the lexical baseline as the default
+# detector. Measured on corpus v1, train split:
+#
+#   token_overlap_v1     precision 0.585  recall 0.414   (Phase 0 baseline)
+#   ast_structural_v1    precision 0.600  recall 0.517   (current default)
+#
+# Set just below the current detector, so unrelated corpus growth does not produce spurious
+# failures. These are a regression alarm, not a quality bar.
 #
 # The quality bar is Phase 1's exit criteria: precision >= 0.90 at recall >= 0.50 on the holdout.
+# Stage 1 alone cannot reach it and is not expected to — a threshold sweep tops out around 0.76
+# precision at 0.38 recall. Precision is stage 3's job. Expect these gates to move again, and
+# substantially, when the adjudicator lands.
 
 corpus_version = "v1"
 
 [gate]
-min_precision = 0.55
-min_recall = 0.38
+min_precision = 0.57
+min_recall = 0.47

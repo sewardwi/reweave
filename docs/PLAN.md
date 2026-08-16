@@ -231,10 +231,10 @@ Each phase has **action points**, **exit criteria** (gates — do not proceed un
 
 ### Phase 1 — Engine v1: semantic duplicate detection (weeks 1–3)
 **Actions:**
-- [ ] tree-sitter parsing for TS/JS + Python; extract function/method code units with spans + content hashes.
-- [ ] AST normalization → structural fingerprints; MinHash/LSH candidate generation with a hard candidate budget.
+- [x] tree-sitter parsing for TS/JS + Python; extract function/method code units with spans + content hashes.
+- [x] AST normalization → structural fingerprints; MinHash/LSH candidate generation with a hard candidate budget.
 - [ ] Embedding rerank (model choice behind an interface; cache by content hash in Postgres).
-- [ ] LLM adjudication with a strict rubric and JSON schema (verdict, consolidation-feasibility, **consolidation-advisability + which D16 rule fired**, rationale).
+- [x] LLM adjudication with a strict rubric and JSON schema (verdict, consolidation-feasibility, **consolidation-advisability + which D16 rule fired**, rationale). *(built and unit-tested offline; not yet exercised against the live API — no key configured)*
 - [ ] Conservative import/symbol resolution (`engine/resolve/`) → `symbol_refs`, with unresolved references counted, never guessed.
 - [ ] Clustering + blast-radius ranking (call sites × recent churn).
 - [ ] `reweave-audit` CLI producing JSON + a polished static HTML report.
