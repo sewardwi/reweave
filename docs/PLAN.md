@@ -237,7 +237,7 @@ Each phase has **action points**, **exit criteria** (gates — do not proceed un
 - [x] LLM adjudication with a strict rubric and JSON schema (verdict, consolidation-feasibility, **consolidation-advisability + which D16 rule fired**, rationale). *(built and unit-tested offline; not yet exercised against the live API — no key configured)*
 - [x] Conservative import/symbol resolution (`engine/resolve/`) → `symbol_refs`, with unresolved references counted, never guessed.
 - [x] Clustering + blast-radius ranking (call sites × recent churn).
-- [ ] `reweave-audit` CLI producing JSON + a polished static HTML report.
+- [x] `reweave-audit` CLI producing JSON + a polished static HTML report. *(no letter grade or Debt Score yet — those are Phase 2 composites and D17 forbids inventing one before its formula is published.)*
 - [ ] **Show raw output to design partners** — no UI, just findings on their repo, walked through live. Record every "that's wrong" and every "that one's intentional"; the latter are D16 rules we haven't written yet.
 
 **Exit criteria (pair benchmark, holdout):** precision ≥ 0.90 at recall ≥ 0.50; full scan of a 300k-LOC repo ≤ 10 min on a dev machine; deterministic re-runs given warm caches; per-scan LLM cost measured and logged.

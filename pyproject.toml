@@ -52,6 +52,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S", "ANN"]
 "benchmarks/*.py" = ["T20"]  # bench scripts are CLIs; printing is their output
+"**/cli.py" = ["T20"]        # stdout is the CLI's output surface, not a log
 "ops/*.py" = ["T20"]
 
 [tool.ruff.lint.isort]
