@@ -235,8 +235,8 @@ Each phase has **action points**, **exit criteria** (gates — do not proceed un
 - [x] AST normalization → structural fingerprints; MinHash/LSH candidate generation with a hard candidate budget.
 - [ ] Embedding rerank (model choice behind an interface; cache by content hash in Postgres).
 - [x] LLM adjudication with a strict rubric and JSON schema (verdict, consolidation-feasibility, **consolidation-advisability + which D16 rule fired**, rationale). *(built and unit-tested offline; not yet exercised against the live API — no key configured)*
-- [ ] Conservative import/symbol resolution (`engine/resolve/`) → `symbol_refs`, with unresolved references counted, never guessed.
-- [ ] Clustering + blast-radius ranking (call sites × recent churn).
+- [x] Conservative import/symbol resolution (`engine/resolve/`) → `symbol_refs`, with unresolved references counted, never guessed.
+- [x] Clustering + blast-radius ranking (call sites × recent churn).
 - [ ] `reweave-audit` CLI producing JSON + a polished static HTML report.
 - [ ] **Show raw output to design partners** — no UI, just findings on their repo, walked through live. Record every "that's wrong" and every "that one's intentional"; the latter are D16 rules we haven't written yet.
 
